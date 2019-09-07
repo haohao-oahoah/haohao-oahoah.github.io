@@ -16,7 +16,6 @@
                 margin: 0;
                 padding: 0;
             }
-
             #renderCanvas {
                 width: 100%;
                 height: 100%;
@@ -40,22 +39,17 @@
         let spriteLabel = null;
         let sphereList = [];
         let ballList = [];
-
         let createScene = function () {
             var scene = new BABYLON.Scene(engine);
             scene.clearColor = new BABYLON.Color3(1, 1, 1);
-            
             var light0 = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0.14, 1, 0.14), scene);
             light0.intensity = 0.9;
             light0.specular = new BABYLON.Color3(0.28, 0.14, 0.24);
-
             var cam = new BABYLON.ArcRotateCamera("ArcRotateCamera",0.74*Math.PI, 1.2, 10, new BABYLON.Vector3(0, 0, 0), scene);
             cam.attachControl(canvas);
-
             discMat= new BABYLON.StandardMaterial("meshFloat",scene);
             discMat.emissiveColor = new BABYLON.Color3(0,0.7,0.2);
             discMat.alpha = 0.47;
-
             matA = new BABYLON.StandardMaterial('A',scene);
             matA.emissiveColor = new BABYLON.Color3(0,0.7,0.2);
             matB = new BABYLON.StandardMaterial('B',scene);
@@ -66,7 +60,6 @@
                 sphereList.push(NORMAL.createGround(i));
             }
             sphereList = NORMAL.applyLoD(sphereList);
-            
             scene.onPointerMove = function (evt, pickResult) {
                     var pickResult = scene.pick(scene.pointerX, scene.pointerY);
                     if (pickResult.hit) {
@@ -94,14 +87,12 @@
                                 allLines[i] = null;
                             }
                         }
-
                         for(let i = 0; i<ballList.length; i++) {
                             if(ballList[i]) {
                                 ballList[i].dispose();
                             }
                             ballList[i] = null;
                         }
-
                         let currentNorm = null;
                         let currentCompute = null;
                         let currentPos = pickResult.pickedPoint;
@@ -112,7 +103,6 @@
                         currentCompute.normalize();
                         currentNorm.scaleInPlace(2);
                         currentCompute.scaleInPlace(2);
-
                         let extendedPos = Z();
                         let extendedPosComputed = Z();
                         let extendedPosInv = Z();
@@ -131,13 +121,10 @@
                             currentCompute.scaleToRef(1,extendedPosComputed);
                             currentCompute.scaleToRef(-1,extendedPosComputedInv);
                         }
-
                         extendedPos.addInPlace(currentPos);
                         extendedPosComputed.addInPlace(currentPos);
-
                         extendedPosInv.addInPlace(currentPos);
                         extendedPosComputedInv.addInPlace(currentPos);
-
                         let tmpAll = Z();
                         extendedPos.addToRef(extendedPosInv,tmpAll);
                         tmpAll.scaleInPlace(0.5);
@@ -150,58 +137,43 @@
                             allLines[i].color = new BABYLON.Color3(1,0,0);
                             ballList.push(NORMAL.addBall(scene,matB,allVec[i]));
                         }
-
                         line = BABYLON.MeshBuilder.CreateLines("line", {points: [tmpAll,extendedPos]}, scene); 
                         line.isPickable = false;
                         line.color = new BABYLON.Color3(0,0.2,1);
                         ballList.push(NORMAL.addBall(scene,matC,extendedPos));
-
                         lineComputed = BABYLON.MeshBuilder.CreateLines("lineComputed", {points: [tmpAll,extendedPosComputed]}, scene); 
                         lineComputed.isPickable = false;
                         lineComputed.color = new BABYLON.Color3(0,0.7,0.2);
                         ballList.push(NORMAL.addBall(scene,matA,extendedPosComputed));
-
                         let displayNormal = " ("+currentNorm.x.toFixed(2)+","
                                             +currentNorm.y.toFixed(2)+","
                                             +currentNorm.z.toFixed(2)+")";
-
-
                         spriteLabel = NORMAL.makeTextSprite(displayNormal, 670, scene);
                         spriteLabel.size = 1;
                         spriteLabel.height = 0.3;
                         spriteLabel.position.copyFrom(extendedPos);
                         spriteLabel.position.y += 0.34;
-
                     }
                 };
-
-
             engine.runRenderLoop(function () {
                 scene.render();
             });
-            
             return scene;
-
         };
         __createScene = createScene;
-        
         var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
         var scene = createScene();
-
         engine.runRenderLoop(function () {
             if (scene) {
                 scene.render();
             }
         });
-
         window.addEventListener("resize", function () {
             engine.resize();
         });
-
         function declare() {
             holder = holder?null:console.log('Concept & Design © Hao');
         }
-
     </script>
 </body>
 </html>
